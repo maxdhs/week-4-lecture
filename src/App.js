@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { connect } from "react-redux";
+import { Form, Control } from "react-redux-form";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  handleSubmit = todo => {
+    this.props.addTodo(todo);
+  };
+
+  render() {
+    return (
+      <div>
+        <p>Todos</p>
+        {this.props.todos.map(todo => (
+          <li key={todo.id}>{todo.description}</li>
+        ))}
+        <Form model="todo" onSubmit={this.handleSubmit}>
+          <Control.text model="todo"></Control.text>
+        </Form>
+      </div>
+    );
+  }
 }
 
-export default App;
+const mapStateToProps = state => {
+  console.log("redux store: ", state);
+  return { todos: state.todos };
+};
+
+const mapDispatchToProps = dispatch => ({
+  addTodo: todo => {
+    dispatch({ type: "ADD_TODO", payload: todo });
+  }
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);
